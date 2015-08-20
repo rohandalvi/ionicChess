@@ -1,0 +1,33 @@
+<ion-modal-view>
+    <ion-header-bar>
+        <h1 class="title">New Game</h1>
+        <div class="buttons">
+            <button class="button button-clear" ng-click="closeDetails()">Close</button>
+        </div>
+    </ion-header-bar>
+    <ion-content>
+        <form ng-submit="saveDetails()">
+            <div class="list">
+                <label class="item item-input">
+                    <span class="input-label">White</span>
+                    <input type="text" ng-model="gameDetails.white">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">White ELO</span>
+                    <input type="number" ng-model="gameDetails.whiteELO">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Black</span>
+                    <input type="text" ng-model="gameDetails.black">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Black ELO</span>
+                    <input type="number" ng-model="gameDetails.blackELO">
+                </label>
+                <label class="item">
+                    <button class="button button-block button-positive" type="submit">Submit</button>
+                </label>
+            </div>
+        </form>
+    </ion-content>
+</ion-modal-view>

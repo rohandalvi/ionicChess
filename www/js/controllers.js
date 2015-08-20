@@ -1,6 +1,7 @@
-angular.module('starter.controllers', [])
+var chessApp = angular.module('starter.controllers', ['starter'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+
+chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -11,25 +12,53 @@ angular.module('starter.controllers', [])
 
   // Form data for the login modal
   $scope.loginData = {};
+  $scope.gameDetails = {};
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
   }).then(function(modal) {
-    $scope.modal = modal;
+    $scope.loginModal = modal;
   });
 
+    $ionicModal.fromTemplateUrl('templates/gameDetails.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.detailsModal = modal;
+    });
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
-    $scope.modal.hide();
+    $scope.loginModal.hide();
   };
+
+    $scope.closeDetails = function(){
+        $scope.detailsModal.hide();
+    }
 
   // Open the login modal
   $scope.login = function() {
-    $scope.modal.show();
+    $scope.loginModal.show();
   };
 
+    $scope.newGame = function(){
+        $scope.detailsModal.show();
+    };
+
   // Perform the login action when the user submits the login form
+  $scope.saveDetails = function(){
+      console.log("Saving game details ",$scope.gameDetails);
+      var game = {};
+      game["white"] = $scope.gameDetails.white;
+      game["black"] = $scope.gameDetails.black;
+      game["whiteELO"] = $scope.gameDetails.whiteELO;
+      game["blackELO"] = $scope.gameDetails.blackELO;
+      games.saveGameDetails(game).then(function(result){
+
+      }, function(error){
+            console.log("Error saving game details in Parse ",error);
+      });
+
+  }
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
 
@@ -39,30 +68,26 @@ angular.module('starter.controllers', [])
       $scope.closeLogin();
     }, 1000);
   };
-})
+});
 
-.controller('PlaylistsCtrl', function($scope) {
+
+chessApp.controller('PlaylistsCtrl',function($scope,games) {
+    console.log("Games",games);
+    $scope.initBoard = function(){
         var board,
-            game = new Chess();
+            game = new Chess(),
+            statusEl = $('#status'),
+            fenEl = $('#fen'),
+            pgnEl = $('#pgn');
 
 // do not pick up pieces if the game is over
-// only pick up pieces for White
+// only pick up pieces for the side to move
         var onDragStart = function(source, piece, position, orientation) {
-            if (game.in_checkmate() === true || game.in_draw() === true ||
-                piece.search(/^b/) !== -1) {
+            if (game.game_over() === true ||
+                (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
                 return false;
             }
-        };
-
-        var makeRandomMove = function() {
-            var possibleMoves = game.moves();
-
-            // game over
-            if (possibleMoves.length === 0) return;
-
-            var randomIndex = Math.floor(Math.random() * possibleMoves.length);
-            game.move(possibleMoves[randomIndex]);
-            board.position(game.fen());
         };
 
         var onDrop = function(source, target) {
@@ -75,15 +100,51 @@ angular.module('starter.controllers', [])
 
             // illegal move
             if (move === null) return 'snapback';
-
-            // make random legal move for black
-            window.setTimeout(makeRandomMove, 250);
+            else{
+                console.log("Move complete");
+            }
+            updateStatus();
         };
 
 // update the board position after the piece snap
 // for castling, en passant, pawn promotion
         var onSnapEnd = function() {
             board.position(game.fen());
+        };
+
+        var updateStatus = function() {
+            var status = '';
+
+            var moveColor = 'White';
+            if (game.turn() === 'b') {
+                moveColor = 'Black';
+            }
+
+            // checkmate?
+            if (game.in_checkmate() === true) {
+                status = 'Game over, ' + moveColor + ' is in checkmate.';
+            }
+
+            // draw?
+            else if (game.in_draw() === true) {
+                status = 'Game over, drawn position';
+            }
+
+            // game still on
+            else {
+                status = moveColor + ' to move';
+
+                // check?
+                if (game.in_check() === true) {
+                    status += ', ' + moveColor + ' is in check';
+                }
+            }
+
+            statusEl.html(status);
+            fenEl.html(game.fen());
+            pgnEl.html(game.pgn());
+
+
         };
 
         var cfg = {
@@ -94,6 +155,11 @@ angular.module('starter.controllers', [])
             onSnapEnd: onSnapEnd
         };
         board = ChessBoard('board', cfg);
+
+        updateStatus();
+    }
+        $scope.initBoard();
+
   $scope.playlists = [
     { title: 'Reggae', id: 1 },
     { title: 'Chill', id: 2 },
@@ -102,7 +168,7 @@ angular.module('starter.controllers', [])
     { title: 'Rap', id: 5 },
     { title: 'Cowbell', id: 6 }
   ];
-})
+});
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+chessApp.controller('PlaylistCtrl', function($scope, $stateParams) {
 });
