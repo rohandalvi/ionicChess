@@ -50,6 +50,9 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,
   }
 
     $scope.newGame = function(){
+        if($state.current.name != "app.playlists"){
+            $state.go('app.playlists');
+        }
         $scope.detailsModal.show();
     };
 
@@ -67,8 +70,7 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,
       games.saveGameDetails(game).then(function(result){
             console.log("Success in saving game details ",result);
             $scope.closeDetails();
-            games.newGame(result);
-            $scope.$broadcast('loadNewBoard');
+            $scope.$broadcast('loadNewBoard',{details: result});
             console.log("Emitted loadNewBoard");
       }, function(error){
             console.log("Error saving game details in Parse ",error);
@@ -103,7 +105,8 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,
 });
 
 
-chessApp.controller('PlaylistsCtrl',function($scope,games,$rootScope) {
+chessApp.controller('PlaylistsCtrl',function($scope,games,$rootScope,$state) {
+    console.log("Current state ",$state.current.name);
     console.log("Games",games);
     $scope.notLoggedIn = false;
     $scope.flipButton = true;
@@ -111,16 +114,26 @@ chessApp.controller('PlaylistsCtrl',function($scope,games,$rootScope) {
     $rootScope.notLoggedIn = false;
     console.log("Sent loggedIn broadcast");
     var that = $scope;
-    $scope.$on('loadNewBoard',function(){
+    $scope.$on('loadNewBoard',function(event,args){
         console.log("Got loadNewBoard");
+        console.log("Args ",args);
         $scope.$apply(function(){
+
+
+
             console.log("Initing board");
+
             $scope.boardGameArray = that.initBoard();
             $scope.board = $scope.boardGameArray[0];
             $scope.game = $scope.boardGameArray[1];
             $scope.flipButton = false;
-            console.log("board inited ",$scope.board);
-            console.log("Game inited ",$scope.game);
+            games.newGame(args.details, $scope.game).then(function(game){
+                console.log("board inited ",$scope.board);
+                console.log("Game inited ",$scope.game);
+            }, function(error){
+                console.log("Error on new game ",error);
+            });
+
         });
 
     });

@@ -21,17 +21,15 @@ app.factory('games', function(){
 
                 }
             });
-
-
         },
 
-        newGame: function(gameDetails){ //here gameDetails has to be a Parse gameDetails Object
-            var gameObject = Parse.Object.exted("game");
+        newGame: function(gameDetails, currentGame){ //here gameDetails has to be a Parse gameDetails Object
+            var gameObject = Parse.Object.extend("game");
             var game = new gameObject();
 
-            game.set("gameDetails",gameDetails);
+            game.set("details",gameDetails);
             game.set("user", Parse.User.current());
-
+            game.set("currentGame",currentGame);
             return p.executeQuery("save",game);
         },
 

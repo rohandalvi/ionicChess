@@ -8,9 +8,6 @@
         <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
         </button>
       </ion-nav-buttons>
-      <ion-nav-buttons side="right">
-        <button class="button button-icon button-clear ion-navicon" menu-toggle="right" ng-hide="notLoggedIn">
-        </button>
       </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="menuContent"></ion-nav-view>
@@ -25,6 +22,9 @@
         <ion-item menu-close ng-click="login()" ng-hide="loggedIn">
           Login
         </ion-item>
+        <ion-item menu-close  ng-hide="notLoggedIn" ng-click="newGame()">
+          New Game
+        </ion-item>
         <ion-item menu-close href="#/app/search">
           Search
         </ion-item>
@@ -34,20 +34,8 @@
         <ion-item menu-close href="#/app/playlists">
           Playlists
         </ion-item>
-        <ion-item menu-close href="#/app/playlists" ng-hide="notLoggedIn" ng-click="logOut()">
+        <ion-item menu-close  ng-hide="notLoggedIn" ng-click="logOut()">
           Logout
-        </ion-item>
-      </ion-list>
-    </ion-content>
-  </ion-side-menu>
-  <ion-side-menu side="right" ng-hide="notLoggedIn">
-    <ion-header-bar class="bar-stable">
-      <h1 class="title">Right</h1>
-    </ion-header-bar>
-    <ion-content>
-      <ion-list>
-        <ion-item menu-close ng-click="newGame()">
-          New game
         </ion-item>
       </ion-list>
     </ion-content>
