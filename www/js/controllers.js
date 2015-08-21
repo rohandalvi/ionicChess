@@ -1,7 +1,7 @@
 var chessApp = angular.module('starter.controllers', ['starter','ionic'])
 
 
-chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,$ionicPopup,$state,$rootScope) {
+chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,$ionicPopup,$state,$rootScope,$ionicHistory,$ionicNavBarDelegate) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -10,12 +10,16 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
+    $ionicNavBarDelegate.showBackButton(false)
   // Form data for the login modal
-
+    $ionicHistory.nextViewOptions({
+        disableBack: true
+    });
   $scope.loginData = {};
   $scope.gameDetails = {};
-  $rootScope.loggedIn = Parse.User.current() ? true : false;
-  $rootScope.notLoggedIn = !$rootScope.loggedIn;
+  //$rootScope.loggedIn = Parse.User.current() ? true : false;
+  //$rootScope.notLoggedIn = !$rootScope.loggedIn;
+
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -44,6 +48,8 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,
   };
   $scope.logOut = function(){
       Parse.User.logOut().then(function(){
+          $rootScope.loggedIn = false;
+          $rootScope.notLoggedIn = true;
           $state.go('app.login');
 
       });
@@ -86,6 +92,8 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,
       var username = $scope.loginData.username;
       var password = $scope.loginData.password;
       user.loginUser(username,password).then(function(user){
+          $rootScope.loggedIn = true;
+          $rootScope.notLoggedIn = false;
             console.log("Success now redirect ",user);
           $state.go('app.playlists');
       }, function(error){
@@ -105,7 +113,8 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,
 });
 
 
-chessApp.controller('PlaylistsCtrl',function($scope,games,$rootScope,$state) {
+chessApp.controller('PlaylistsCtrl',function($scope,games,$rootScope,$state,$ionicHistory,$ionicNavBarDelegate) {
+    $ionicNavBarDelegate.showBackButton(false)
     console.log("Current state ",$state.current.name);
     console.log("Games",games);
     $scope.notLoggedIn = false;
@@ -113,16 +122,14 @@ chessApp.controller('PlaylistsCtrl',function($scope,games,$rootScope,$state) {
     $rootScope.loggedIn = true;
     $rootScope.notLoggedIn = false;
     console.log("Sent loggedIn broadcast");
+    $ionicHistory.nextViewOptions({
+        disableBack: true
+    });
     var that = $scope;
     $scope.$on('loadNewBoard',function(event,args){
         console.log("Got loadNewBoard");
         console.log("Args ",args);
         $scope.$apply(function(){
-
-
-
-            console.log("Initing board");
-
             $scope.boardGameArray = that.initBoard();
             $scope.board = $scope.boardGameArray[0];
             $scope.game = $scope.boardGameArray[1];
