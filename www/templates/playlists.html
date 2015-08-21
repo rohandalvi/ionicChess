@@ -7,13 +7,15 @@
     <!--</ion-list>-->
     <div class="row text-center">
       <div class="col col-50">
-        Here will be the chessboard
+
 
         <div id="board" style="width: 400px"></div>
         <p>Status: <span id="status"></span></p>
         <p>FEN: <span id="fen"></span></p>
         <p>PGN: <span id="pgn"></span></p>
-        <div id="board1" style="width: 400px"></div>
+        <button class="button button-positive" ng-hide="flipButton" ng-click="flip()">
+          Flip board
+        </button>
       </div>
     </div>
   </ion-content>

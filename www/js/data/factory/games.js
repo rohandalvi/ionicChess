@@ -25,7 +25,7 @@ app.factory('games', function(){
 
         },
 
-        newGame: function(user,gameDetails){ //here gameDetails has to be a Parse gameDetails Object
+        newGame: function(gameDetails){ //here gameDetails has to be a Parse gameDetails Object
             var gameObject = Parse.Object.exted("game");
             var game = new gameObject();
 
@@ -42,7 +42,7 @@ app.factory('games', function(){
             for(var key in gameDetails){
                 details.set(key,gameDetails[key]);
             }
-            return details.save();
+            return p.executeQuery("save",details);
         },
         isLoaded: function(){
             console.log("Sure is loaded");

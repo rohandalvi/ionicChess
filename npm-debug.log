@@ -1,0 +1,67 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'ui.router' ]
+2 info using npm@1.3.11
+3 info using node@v0.10.20
+4 warn package.json chessapp@1.0.0 No repository field.
+5 verbose readDependencies using package.json deps
+6 verbose cache add [ 'ui.router', null ]
+7 verbose cache add name=undefined spec="ui.router" args=["ui.router",null]
+8 verbose parsed url { protocol: null,
+8 verbose parsed url   slashes: null,
+8 verbose parsed url   auth: null,
+8 verbose parsed url   host: null,
+8 verbose parsed url   port: null,
+8 verbose parsed url   hostname: null,
+8 verbose parsed url   hash: null,
+8 verbose parsed url   search: null,
+8 verbose parsed url   query: null,
+8 verbose parsed url   pathname: 'ui.router',
+8 verbose parsed url   path: 'ui.router',
+8 verbose parsed url   href: 'ui.router' }
+9 silly lockFile d5924ed8-ui-router ui.router
+10 verbose lock ui.router /Users/rohandalvi/.npm/d5924ed8-ui-router.lock
+11 silly lockFile d5924ed8-ui-router ui.router
+12 silly lockFile d5924ed8-ui-router ui.router
+13 verbose addNamed [ 'ui.router', '' ]
+14 verbose addNamed [ null, '*' ]
+15 silly lockFile 37afa57f-ui-router ui.router@
+16 verbose lock ui.router@ /Users/rohandalvi/.npm/37afa57f-ui-router.lock
+17 silly addNameRange { name: 'ui.router', range: '*', hasData: false }
+18 verbose url raw ui.router
+19 verbose url resolving [ 'https://registry.npmjs.org/', './ui.router' ]
+20 verbose url resolved https://registry.npmjs.org/ui.router
+21 info trying registry request attempt 1 at 20:02:06
+22 http GET https://registry.npmjs.org/ui.router
+23 http 404 https://registry.npmjs.org/ui.router
+24 silly registry.get cb [ 404,
+24 silly registry.get   { 'content-type': 'application/json',
+24 silly registry.get     'cache-control': 'max-age=0',
+24 silly registry.get     'content-length': '2',
+24 silly registry.get     'accept-ranges': 'bytes',
+24 silly registry.get     date: 'Fri, 21 Aug 2015 00:02:06 GMT',
+24 silly registry.get     via: '1.1 varnish',
+24 silly registry.get     age: '0',
+24 silly registry.get     connection: 'keep-alive',
+24 silly registry.get     'x-served-by': 'cache-atl6223-ATL',
+24 silly registry.get     'x-cache': 'MISS',
+24 silly registry.get     'x-cache-hits': '0',
+24 silly registry.get     'x-timer': 'S1440115326.487068,VS0,VE359' } ]
+25 silly addNameRange number 2 { name: 'ui.router', range: '*', hasData: true }
+26 silly addNameRange versions [ undefined, [] ]
+27 error TypeError: Cannot read property 'latest' of undefined
+27 error     at next (/usr/local/lib/node_modules/npm/lib/cache.js:687:35)
+27 error     at /usr/local/lib/node_modules/npm/lib/cache.js:675:5
+27 error     at saved (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/get.js:142:7)
+27 error     at /usr/local/lib/node_modules/npm/node_modules/graceful-fs/polyfills.js:133:7
+27 error     at Object.oncomplete (fs.js:107:15)
+28 error If you need help, you may report this log at:
+28 error     <http://github.com/isaacs/npm/issues>
+28 error or email it to:
+28 error     <npm-@googlegroups.com>
+29 error System Darwin 14.5.0
+30 error command "node" "/usr/local/bin/npm" "install" "ui.router"
+31 error cwd /Users/rohandalvi/ionicApps/chessApp
+32 error node -v v0.10.20
+33 error npm -v 1.3.11
+34 error type non_object_property_load
+35 verbose exit [ 1, true ]

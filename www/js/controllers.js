@@ -1,7 +1,7 @@
-var chessApp = angular.module('starter.controllers', ['starter'])
+var chessApp = angular.module('starter.controllers', ['starter','ionic'])
 
 
-chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games) {
+chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games,user,$ionicPopup,$state,$rootScope) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -11,8 +11,11 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games) {
   //});
 
   // Form data for the login modal
+
   $scope.loginData = {};
   $scope.gameDetails = {};
+  $rootScope.loggedIn = Parse.User.current() ? true : false;
+  $rootScope.notLoggedIn = !$rootScope.loggedIn;
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -39,21 +42,34 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games) {
   $scope.login = function() {
     $scope.loginModal.show();
   };
+  $scope.logOut = function(){
+      Parse.User.logOut().then(function(){
+          $state.go('app.login');
+
+      });
+  }
 
     $scope.newGame = function(){
         $scope.detailsModal.show();
     };
 
   // Perform the login action when the user submits the login form
+
   $scope.saveDetails = function(){
+      var that = $scope;
       console.log("Saving game details ",$scope.gameDetails);
       var game = {};
       game["white"] = $scope.gameDetails.white;
       game["black"] = $scope.gameDetails.black;
       game["whiteELO"] = $scope.gameDetails.whiteELO;
       game["blackELO"] = $scope.gameDetails.blackELO;
-      games.saveGameDetails(game).then(function(result){
 
+      games.saveGameDetails(game).then(function(result){
+            console.log("Success in saving game details ",result);
+            $scope.closeDetails();
+            games.newGame(result);
+            $scope.$broadcast('loadNewBoard');
+            console.log("Emitted loadNewBoard");
       }, function(error){
             console.log("Error saving game details in Parse ",error);
       });
@@ -61,9 +77,25 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games) {
   }
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
-
+    console.log("State is ",$state);
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
+
+      var username = $scope.loginData.username;
+      var password = $scope.loginData.password;
+      user.loginUser(username,password).then(function(user){
+            console.log("Success now redirect ",user);
+          $state.go('app.playlists');
+      }, function(error){
+          if(error.code == 101){
+              showErrorLoginPopup($scope,$ionicPopup);
+          }else{
+              console.log("A different error ",error);
+          }
+
+
+      });
+
     $timeout(function() {
       $scope.closeLogin();
     }, 1000);
@@ -71,8 +103,33 @@ chessApp.controller('AppCtrl',function($scope, $ionicModal, $timeout,games) {
 });
 
 
-chessApp.controller('PlaylistsCtrl',function($scope,games) {
+chessApp.controller('PlaylistsCtrl',function($scope,games,$rootScope) {
     console.log("Games",games);
+    $scope.notLoggedIn = false;
+    $scope.flipButton = true;
+    $rootScope.loggedIn = true;
+    $rootScope.notLoggedIn = false;
+    console.log("Sent loggedIn broadcast");
+    var that = $scope;
+    $scope.$on('loadNewBoard',function(){
+        console.log("Got loadNewBoard");
+        $scope.$apply(function(){
+            console.log("Initing board");
+            $scope.boardGameArray = that.initBoard();
+            $scope.board = $scope.boardGameArray[0];
+            $scope.game = $scope.boardGameArray[1];
+            $scope.flipButton = false;
+            console.log("board inited ",$scope.board);
+            console.log("Game inited ",$scope.game);
+        });
+
+    });
+    $scope.flip = function(){
+        if($scope.board){
+            $scope.board.flip();
+        }
+
+    }
     $scope.initBoard = function(){
         var board,
             game = new Chess(),
@@ -139,11 +196,9 @@ chessApp.controller('PlaylistsCtrl',function($scope,games) {
                     status += ', ' + moveColor + ' is in check';
                 }
             }
-
             statusEl.html(status);
             fenEl.html(game.fen());
             pgnEl.html(game.pgn());
-
 
         };
 
@@ -157,17 +212,8 @@ chessApp.controller('PlaylistsCtrl',function($scope,games) {
         board = ChessBoard('board', cfg);
 
         updateStatus();
+        return [board,game];
     }
-        $scope.initBoard();
-
-  $scope.playlists = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
 });
 
 chessApp.controller('PlaylistCtrl', function($scope, $stateParams) {

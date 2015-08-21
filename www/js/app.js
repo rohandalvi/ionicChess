@@ -58,6 +58,14 @@ app.config(function($stateProvider, $urlRouterProvider) {
         }
       }
     })
+    .state('app.login', {
+        url: '/login',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/login.html'
+          }
+        }
+    })
 
   .state('app.single', {
     url: '/playlists/:playlistId',
@@ -69,5 +77,5 @@ app.config(function($stateProvider, $urlRouterProvider) {
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/login');
 });
